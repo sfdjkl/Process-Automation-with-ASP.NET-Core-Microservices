@@ -23,9 +23,6 @@ kind: Secret
 metadata:
   name: environment-secrets
 data:
-    # identity-database-sa-password: aWRlbnRpdHlEYXRhYmFzZVBhc3N3b3JkMTIhQA==
-    # dealers-database-sa-password: ZGVhbGVyc0RhdGFiYXNlUGFzc3dvcmQxMiFA
-    # statistics-database-sa-password: c3RhdGlzdGljc0RhdGFiYXNlUGFzc3dvcmQxMiFA
     car-rental-system-database-sa-password: Y3JzRGF0YWJhc2VQYXNzd29yZDEyIUA=
     security-token-secret: UzBNMyBNNEcxQyBVTjFDMFJOUyBHM04zUjRUM0QgVEgxUyBTM0NSM1Q=
     admin-password: YWRtaW5wYXNzMTIh
