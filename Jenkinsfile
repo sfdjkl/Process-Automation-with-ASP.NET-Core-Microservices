@@ -112,8 +112,8 @@ pipeline {
           }
           else {
             stage('Deploy Production') {
-              withKubeConfig([credentialsId: 'DevelopmentServer', serverUrl: 'https://car-rental-system-dns-18b73077.hcp.westeurope.azmk8s.io']) {
-                powershell(script: 'kubectl apply -f ./.k8s/.environment/development.yml')
+              withKubeConfig([credentialsId: 'ProductionServer', serverUrl: 'https://car-rental-system-production-dns-94a2f482.hcp.uksouth.azmk8s.io']) {
+                powershell(script: 'kubectl apply -f ./.k8s/.environment/production.yml')
                 powershell(script: 'kubectl apply -R -f ./.k8s/objects/')
                 //powershell(script: 'kubectl set image deployments/user-client user-client=pesho1/carrentalsystem-user-client-development')
               }
