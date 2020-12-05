@@ -17,6 +17,12 @@ kind: Deployment
 metadata:
   name: user-client
 spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0 
   selector:
     matchLabels:
       web-client: user-client
