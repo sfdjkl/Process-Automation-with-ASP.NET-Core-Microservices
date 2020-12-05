@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  environment {
+    PROD_VERSION = "1.0.${env.BUILD_ID}"
+  }
   stages {
     stage('Verify Branch') {
       steps {
@@ -19,6 +22,7 @@ pipeline {
       steps {
         powershell(script: 'docker-compose build')
         powershell(script: 'docker build -t pesho1/carrentalsystem-user-client-development --build-arg configuration=development .\\Client\\')
+        powershell(script: 'docker build -t pesho1/carrentalsystem-user-client-production --build-arg configuration=production .\\Client\\')
         powershell(script: 'docker images -a')
       }
     }
@@ -58,7 +62,8 @@ pipeline {
             "pesho1/carrentalsystem-user-client",
             "pesho1/carrentalsystem-admin-client",
             "pesho1/carrentalsystem-watchdog-service",
-            "pesho1/carrentalsystem-user-client-development"
+            "pesho1/carrentalsystem-user-client-development",
+            "pesho1/carrentalsystem-user-client-production"
           ]
 
           docker.withRegistry('https://index.docker.io/v1/', 'DockerHub') {
@@ -68,7 +73,7 @@ pipeline {
               def image = docker.image(imageName)
               
               if (env.BRANCH_NAME == 'main') {
-                image.push("1.0.${env.BUILD_ID}")
+                image.push(PROD_VERSION)
               }
 
               if (env.BRANCH_NAME == 'development') {
@@ -86,6 +91,39 @@ pipeline {
           powershell(script: 'kubectl apply -f ./.k8s/.environment/development.yml')
           powershell(script: 'kubectl apply -R -f ./.k8s/objects/')
           powershell(script: 'kubectl set image deployments/user-client user-client=pesho1/carrentalsystem-user-client-development')
+        }
+      }
+    }
+    stage('Confirm Production Deployment') {
+      when { branch 'main' }
+
+      steps {
+        script {
+          def runRelease = false
+          timeout(time: 60, unit: 'SECONDS') {
+            runRelease = input(
+              message: 'Deploy to Production', parameters: [
+              [$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Please confirm you want to deploy']
+            ])
+          }
+
+          if(!runRelease) {
+            def user = err.getCauses()[0].getUser()
+            if('SYSTEM' == user.toString()) {
+                echo "Aborted by System (timeout)"
+            } else {
+                echo "Aborted by: [${user}]"
+            }
+          }
+          else {
+            stage('Deploy Production') {
+              withKubeConfig([credentialsId: 'ProductionServer', serverUrl: 'https://car-rental-system-production-dns-94a2f482.hcp.uksouth.azmk8s.io']) {
+                powershell(script: 'kubectl apply -f ./.k8s/.environment/production.yml')
+                powershell(script: 'kubectl apply -R -f ./.k8s/objects/')
+                powershell(script: "kubectl set image deployments/user-client user-client=pesho1/carrentalsystem-user-client-production:${PROD_VERSION}")
+              }
+            }
+          }
         }
       }
     }
