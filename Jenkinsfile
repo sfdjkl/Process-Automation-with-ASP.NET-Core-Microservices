@@ -19,6 +19,7 @@ pipeline {
       steps {
         powershell(script: 'docker-compose build')
         powershell(script: 'docker build -t pesho1/carrentalsystem-user-client-development --build-arg configuration=development .\\Client\\')
+        powershell(script: 'docker build -t pesho1/carrentalsystem-user-client-production --build-arg configuration=production .\\Client\\')
         powershell(script: 'docker images -a')
       }
     }
@@ -58,7 +59,8 @@ pipeline {
             "pesho1/carrentalsystem-user-client",
             "pesho1/carrentalsystem-admin-client",
             "pesho1/carrentalsystem-watchdog-service",
-            "pesho1/carrentalsystem-user-client-development"
+            "pesho1/carrentalsystem-user-client-development",
+            "pesho1/carrentalsystem-user-client-production"
           ]
 
           docker.withRegistry('https://index.docker.io/v1/', 'DockerHub') {
@@ -115,7 +117,7 @@ pipeline {
               withKubeConfig([credentialsId: 'ProductionServer', serverUrl: 'https://car-rental-system-production-dns-94a2f482.hcp.uksouth.azmk8s.io']) {
                 powershell(script: 'kubectl apply -f ./.k8s/.environment/production.yml')
                 powershell(script: 'kubectl apply -R -f ./.k8s/objects/')
-                //powershell(script: 'kubectl set image deployments/user-client user-client=pesho1/carrentalsystem-user-client-development')
+                powershell(script: 'kubectl set image deployments/user-client user-client=pesho1/carrentalsystem-user-client-production')
               }
             }
           }
