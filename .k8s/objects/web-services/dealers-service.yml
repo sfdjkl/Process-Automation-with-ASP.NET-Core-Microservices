@@ -31,6 +31,12 @@ kind: Deployment
 metadata:
   name: dealers-service
 spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
   selector:
     matchLabels:
       web-service: dealers
