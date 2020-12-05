@@ -6,15 +6,15 @@ data:
   seed-initial-data: "False"
   event-bus-user: rabbitmquser
   event-bus-host: event-bus
-  notifications-allowed-origins: http://20.68.184.57/
-  admin-identity-endpoint: http://20.68.184.180:5001
-  admin-dealers-endpoint: http://51.145.124.16:5002
-  admin-statistics-endpoint: http://20.68.185.14:5003
-  watchdog-identity-health: http://20.68.184.180:5001/health
-  watchdog-dealers-health: http://51.145.124.16:5002/health
-  watchdog-statistics-health: http://20.68.185.14:5003/health
-  watchdog-notifications-health: http://20.68.184.184:5004/health
-  watchdog-admin-health: http://51.145.121.179:5000/health
+  notifications-allowed-origins: http://20.49.210.44/
+  admin-identity-endpoint: http://20.49.208.245:5001
+  admin-dealers-endpoint: http://20.49.212.212:5002
+  admin-statistics-endpoint: http://20.49.214.115:5003
+  watchdog-identity-health: http://20.49.208.245:5001/health
+  watchdog-dealers-health: http://20.49.212.212:5002/health
+  watchdog-statistics-health: http://20.49.214.115:5003/health
+  watchdog-notifications-health: http://20.49.214.113:5004/health
+  watchdog-admin-health: http://20.49.213.55:5000/health
 
 ---
 
