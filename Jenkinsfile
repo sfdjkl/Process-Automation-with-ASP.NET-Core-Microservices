@@ -95,6 +95,7 @@ pipeline {
       }
     }
     stage('Run Dev Integration Tests') {
+      when { branch 'development' }
       steps {
         powershell(script: './Tests/ContainerTests.dev.ps1')
       }
@@ -135,21 +136,22 @@ pipeline {
               def filesStr = files.join(',')
 
               for (image in images) {
-                contentReplace(
-                  configs: [
-                    fileContentReplaceConfig(
-                      configs: [
-                        fileContentReplaceItemConfig(
-                          search: image.key,
-                          replace: "${image.value}:${PROD_VERSION}"
-                          // matchCount: 1
-                        )
-                      ],
-                      fileEncoding: 'UTF-8',
-                      filePath: filesStr
-                    )
-                  ]
-                )
+                echo "${image.key} => ${image.value}"
+                // contentReplace(
+                //   configs: [
+                //     fileContentReplaceConfig(
+                //       configs: [
+                //         fileContentReplaceItemConfig(
+                //           search: image.key,
+                //           replace: "${image.value}:${PROD_VERSION}"
+                //           // matchCount: 1
+                //         )
+                //       ],
+                //       fileEncoding: 'UTF-8',
+                //       filePath: filesStr
+                //     )
+                //   ]
+                // )
               }
               
               withKubeConfig([credentialsId: 'ProductionServer', serverUrl: 'https://car-rental-system-production-dns-94a2f482.hcp.uksouth.azmk8s.io']) {
