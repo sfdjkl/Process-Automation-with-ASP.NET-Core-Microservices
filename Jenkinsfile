@@ -136,7 +136,8 @@ pipeline {
               def filesStr = files.join(',')
 
               for (image in images) {
-                echo "${image.key} => ${image.value}"
+                def imageWithTag = "${image.value}:${PROD_VERSION}"
+                echo "${image.key} => ${imageWithTag}"
                 // contentReplace(
                 //   configs: [
                 //     fileContentReplaceConfig(
