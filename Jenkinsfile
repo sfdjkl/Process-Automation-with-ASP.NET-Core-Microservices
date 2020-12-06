@@ -135,15 +135,15 @@ pipeline {
               def files = findFiles(glob: "**/.k8s/**/*.yml")
               def filesStr = files.join(',')
 
-              for (image in images) {
-                def imageWithTag = "${image.value}:${PROD_VERSION}"
-                // echo "${image.key} => ${imageWithTag}"
+              images.each{ k,v ->
+                def imageWithTag = "${v}:${PROD_VERSION}"
+                echo "Replacing ${k} => ${imageWithTag}"
                 contentReplace(
                   configs: [
                     fileContentReplaceConfig(
                       configs: [
                         fileContentReplaceItemConfig(
-                          search: image.key,
+                          search: k,
                           replace: imageWithTag
                           // matchCount: 1
                         )
