@@ -122,10 +122,37 @@ pipeline {
           }
           else {
             stage('Deploy Production') {
+              def images = [
+                "pesho1/carrentalsystem-user-client": "pesho1/carrentalsystem-user-client-production",
+                "pesho1/carrentalsystem-admin-client" : "pesho1/carrentalsystem-admin-client",
+                "pesho1/carrentalsystem-watchdog-service": "pesho1/carrentalsystem-watchdog-service",
+                "pesho1/carrentalsystem-dealers-service": "pesho1/carrentalsystem-dealers-service",
+                "pesho1/carrentalsystem-identity-service": "pesho1/carrentalsystem-identity-service",
+                "pesho1/carrentalsystem-notifications-service" : "pesho1/carrentalsystem-notifications-service",
+                "pesho1/carrentalsystem-statistics-service" : "pesho1/carrentalsystem-statistics-service"
+              ]
+
+              for (image in images) {
+                contentReplace(
+                  configs: [
+                    fileContentReplaceConfig(
+                      configs: [
+                        fileContentReplaceItemConfig(
+                          search: image.key,
+                          replace: "${image.value}:${PROD_VERSION}",
+                        matchCount: 1)
+                      ],
+                      fileEncoding: 'UTF-8',
+                      filePath: './.k8s/'
+                    )
+                  ]
+                )
+              }
+              
               withKubeConfig([credentialsId: 'ProductionServer', serverUrl: 'https://car-rental-system-production-dns-94a2f482.hcp.uksouth.azmk8s.io']) {
                 powershell(script: 'kubectl apply -f ./.k8s/.environment/production.yml')
                 powershell(script: 'kubectl apply -R -f ./.k8s/objects/')
-                powershell(script: "kubectl set image deployments/user-client user-client=pesho1/carrentalsystem-user-client-production:${PROD_VERSION}")
+                // powershell(script: "kubectl set image deployments/user-client user-client=pesho1/carrentalsystem-user-client-production:${PROD_VERSION}")
               }
             }
           }
