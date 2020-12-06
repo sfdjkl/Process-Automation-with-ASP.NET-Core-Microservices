@@ -31,9 +31,9 @@ pipeline {
         powershell(script: 'docker-compose up -d')
       }
     }
-    stage('Run Integration Tests') {
+    stage('Run Local Integration Tests') {
       steps {
-        powershell(script: './Tests/ContainerTests.ps1')
+        powershell(script: './Tests/ContainerTests.local.ps1')
       }
     }
     stage('Stop Test Application') {
@@ -92,6 +92,11 @@ pipeline {
           powershell(script: 'kubectl apply -R -f ./.k8s/objects/')
           powershell(script: 'kubectl set image deployments/user-client user-client=pesho1/carrentalsystem-user-client-development:latest')
         }
+      }
+    }
+    stage('Run Dev Integration Tests') {
+      steps {
+        powershell(script: './Tests/ContainerTests.dev.ps1')
       }
     }
     stage('Confirm Production Deployment') {
