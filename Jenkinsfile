@@ -131,6 +131,8 @@ pipeline {
                 "pesho1/carrentalsystem-notifications-service" : "pesho1/carrentalsystem-notifications-service",
                 "pesho1/carrentalsystem-statistics-service" : "pesho1/carrentalsystem-statistics-service"
               ]
+              def files = findFiles(glob: "**/.k8s/**/*.yml")
+              def filesStr = files.join(',')
 
               for (image in images) {
                 contentReplace(
@@ -143,7 +145,7 @@ pipeline {
                         matchCount: 1)
                       ],
                       fileEncoding: 'UTF-8',
-                      filePath: './.k8s/'
+                      filePath: filesStr
                     )
                   ]
                 )
