@@ -137,22 +137,22 @@ pipeline {
 
               for (image in images) {
                 def imageWithTag = "${image.value}:${PROD_VERSION}"
-                echo "${image.key} => ${imageWithTag}"
-                // contentReplace(
-                //   configs: [
-                //     fileContentReplaceConfig(
-                //       configs: [
-                //         fileContentReplaceItemConfig(
-                //           search: image.key,
-                //           replace: "${image.value}:${PROD_VERSION}"
-                //           // matchCount: 1
-                //         )
-                //       ],
-                //       fileEncoding: 'UTF-8',
-                //       filePath: filesStr
-                //     )
-                //   ]
-                // )
+                // echo "${image.key} => ${imageWithTag}"
+                contentReplace(
+                  configs: [
+                    fileContentReplaceConfig(
+                      configs: [
+                        fileContentReplaceItemConfig(
+                          search: image.key,
+                          replace: imageWithTag
+                          // matchCount: 1
+                        )
+                      ],
+                      fileEncoding: 'UTF-8',
+                      filePath: filesStr
+                    )
+                  ]
+                )
               }
               
               withKubeConfig([credentialsId: 'ProductionServer', serverUrl: 'https://car-rental-system-production-dns-94a2f482.hcp.uksouth.azmk8s.io']) {
