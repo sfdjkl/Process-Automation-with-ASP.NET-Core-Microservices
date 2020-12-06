@@ -141,8 +141,9 @@ pipeline {
                       configs: [
                         fileContentReplaceItemConfig(
                           search: image.key,
-                          replace: "${image.value}:${PROD_VERSION}",
-                        matchCount: 1)
+                          replace: "${image.value}:${PROD_VERSION}"
+                          // matchCount: 1
+                        )
                       ],
                       fileEncoding: 'UTF-8',
                       filePath: filesStr
